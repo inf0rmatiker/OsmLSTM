@@ -1,8 +1,6 @@
 import load_data
 import numpy as np
 import os
-import matplotlib
-import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -10,23 +8,6 @@ from   torch.autograd import Variable
 
 
 '''
-Data is in the format:
-zoom,x,y,quadhash,count
-
-There are 4 entries per day, one per quadhash tile at zoom level 1.
-
-Tiles are laid out as follows for zoom level 1:
-    00, 01, 10, 11 for xy coordinates
-y
-^_______________
-|       |       |
-| (2)01 | (3)11 |
-|_______|_______|
-|       |       |
-| (0)00 | (1)10 |
-|_______|_______| > x
-
-
 Note: tutorial from https://stackabuse.com/time-series-prediction-using-lstm-with-pytorch-in-python/
 used to create LSTM class.
 
@@ -67,30 +48,41 @@ class LSTM(nn.Module):
         return predictions
 
 
-def plot_labels(number, labels):
     
         
 def main():
-    # Parameters for LSTM
+
+    # Variables for LSTM
     WINDOW_SIZE = 10 
     INPUT_SIZE  = 4
-    HIDDEN_SIZE = 4 
+    HIDDEN_SIZE = 64 
     OUTPUT_SIZE = 4
     EPOCHS = 10 
 
+    # Variables for data loader
+    DIRECTORY = './zoom_10_subset/'
+    
+    max_count = load_data.find_max_count(DIRECTORY)
+    
+    train_f, train_t, valid_f, valid_t, test_f, test_t = load_data.get_data_sets(DIRECTORY, WINDOW_SIZE, max_count)
 
-    max_count = load_data.find_max_count()
-    train_f, train_t, valid_f, valid_t, test_f, test_t = load_data.get_data_sets(WINDOW_SIZE, max_count)
-
-    train_set         = torch.utils.data.TensorDataset(train_f, train_t)
-    valid_set         = torch.utils.data.TensorDataset(valid_f, valid_t)
-    test_set          = torch.utils.data.TensorDataset(test_f, test_t)
+    train_set    = torch.utils.data.TensorDataset(train_f, train_t)
+    valid_set    = torch.utils.data.TensorDataset(valid_f, valid_t)
+    test_set     = torch.utils.data.TensorDataset(test_f, test_t)
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=1, shuffle=False)
     valid_loader = torch.utils.data.DataLoader(train_set, batch_size=1, shuffle=False)
     test_loader  = torch.utils.data.DataLoader(test_set,  batch_size=1, shuffle=False)
 
-    
+
+
+    for data in train_set:
+        print(data[0].size())
+        break
+
+
+    '''
+        
     model = LSTM(INPUT_SIZE, WINDOW_SIZE, HIDDEN_SIZE, OUTPUT_SIZE)
     loss_func = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -140,7 +132,7 @@ def main():
             print(int(y_prediction[0][0]*max_count))
             print(int(labels[0][0]*max_count))
             break
-
+    '''
 
 if __name__ == '__main__':
     main()
