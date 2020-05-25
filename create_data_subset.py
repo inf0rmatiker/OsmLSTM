@@ -16,27 +16,25 @@ def is_within_bounds(vals):
     zoom level.
 '''
 def main():
-     
-    
     input_path  = '/s/lattice-64/a/nobackup/galileo/OSM_Processed_Data/'
     output_path = './zoom_{0}_subset/'.format(ZOOM_LEVEL)
     files = os.listdir(input_path)
 
     if not os.path.exists(output_path):
-        os.makedirs(output_path)    
+        os.makedirs(output_path)
 
         count = 0
         for filename in files:
             print('Processing file %d: %s...' % (count, filename))
             with open(input_path + filename, 'r') as file_in:
                 with open(output_path + filename, 'w') as file_out:
-        
+
                     for line in file_in:
                         vals = [int(element) for element in line.split(',')]
                         if vals[0] == ZOOM_LEVEL and is_within_bounds(vals):
                             file_out.write(line)
-            
-            count += 1 
+
+            count += 1
 
     else:
         print('%s already exists!' % output_path)

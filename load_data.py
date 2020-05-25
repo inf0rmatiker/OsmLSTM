@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import os
+import sys
 
 '''
 Loads the data from all days for a given area at a given predefined zoom level.
@@ -41,10 +42,10 @@ def find_max_count(directory):
     files = os.listdir(directory)  # Sort by date
     for filename in files:
         if ((index+1)%10) == 0:
-            print("\e[\rProcessing file %d/%d" % (index+1, 2096))
+            sys.stdout.write("\rProcessing file " + str(index+1) + "/2096")
+            sys.stdout.flush()
         elif index == 0:
-            print("Processing file 0/2096")
-
+            sys.stdout.write("Processing file 0/2096")
 
         filename = directory + filename
         with open(filename, 'r') as f:
@@ -55,7 +56,7 @@ def find_max_count(directory):
         index += 1
 
 
-    print('Max count value of %d found.' % max_count)
+    print('\nMax count value of %d found.' % max_count)
     return max_count
 
 '''
@@ -99,11 +100,7 @@ def get_data_sets(directory, window_size, max_count):
     if (cuda_available):
         type = torch.cuda.FloatTensor
 
-    if cuda_available:
-        print("CUDA is available")
-    else:
-        print("CUDA is not available")
-    #print("CUDA %s available." % 'is' if cuda_available else 'is not')
+    print("CUDA %s available." % ('is' if cuda_available else 'is not'))
 
     train_features = []
     train_targets = []
@@ -117,10 +114,13 @@ def get_data_sets(directory, window_size, max_count):
 
     files = os.listdir(directory)
     files.sort()  # Sort by date
-    while window_end < (len(files) - 1):
+    while window_end < 200: # (len(files) - 1):
 
         if (window_start+1) % 10 == 0:
-            print("Processing file %d/%d" % (window_start+1, 2096))
+            sys.stdout.write("\rProcessing file " + str(window_start+1) + "/2096")
+            sys.stdout.flush()
+        elif window_start == 0:
+            sys.stdout.write("Processing file 0/2096")
 
         # List of numpy matrices      
         input_vector = []
@@ -153,5 +153,5 @@ def get_data_sets(directory, window_size, max_count):
 
         window_start += 1
         window_end += 1
-
-    return torch.stack(train_features), torch.stack(train_targets), torch.stack(validation_features), torch.stack(validation_targets), torch.stack(test_features), torch.stack(test_targets)
+    print()
+    return torch.stack(train_features), torch.stack(train_targets) #, torch.stack(validation_features), torch.stack(validation_targets), torch.stack(test_features), torch.stack(test_targets)
