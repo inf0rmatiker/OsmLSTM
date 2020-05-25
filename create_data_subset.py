@@ -1,11 +1,11 @@
 import os
 
 # Global variables
-ZOOM_LEVEL = 10
-TOP_LEFT_X = 159
-TOP_LEFT_Y = 351
-BOTTOM_RIGHT_X = 324
-BOTTOM_RIGHT_Y = 438
+ZOOM_LEVEL = 5  # 10
+TOP_LEFT_X = 4  # 159
+TOP_LEFT_Y = 10 # 351
+BOTTOM_RIGHT_X = 10 # 324
+BOTTOM_RIGHT_Y = 13 # 438
 
 def is_within_bounds(vals):
     return vals[1] >= TOP_LEFT_X and vals[1] <= BOTTOM_RIGHT_X and vals[2] >= TOP_LEFT_Y and vals[2] <= BOTTOM_RIGHT_Y
